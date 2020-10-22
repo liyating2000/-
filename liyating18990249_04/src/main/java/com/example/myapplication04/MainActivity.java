@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_login; // 声明一个登录按钮控件对象
     private Switch ck_remember; // 声明一个开关对象
     private int mRequestCode = 0; // 跳转页面时的请求代码
+    private int mType = 0; // 用户类型
 
 
     @Override
@@ -90,8 +91,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 设置下拉框默认显示第几项
         sp_type.setSelection(2);
 
+        // 给下拉框设置选择监听器，一旦用户选中某一项，就触发监听器的onItemSelected方法
+        sp_type.setOnItemSelectedListener(new TypeSelectedListener());
+
     }
 
+    // 定义用户类型的选择监听器
+    class TypeSelectedListener implements AdapterView.OnItemSelectedListener {
+        // 选择事件的处理方法，其中arg2代表选择项的序号
+        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            mType = arg2;
+        }
+
+        // 未选择时的处理方法，通常无需关注
+        public void onNothingSelected(AdapterView<?> arg0) {
+        }
+    }
 
     // 定义登录方式的单选监听器
     private class RadioListener implements RadioGroup.OnCheckedChangeListener {

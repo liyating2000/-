@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.myapplication04.util.DateUtil;
+import com.example.myapplication04.util.ViewUtil;
 
 public class LoginForgetActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -39,6 +42,43 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
 
         // 从前一个页面获取要修改密码的手机号码
         mPhone = getIntent().getStringExtra("phone");
+
+        // 添加文本变更监听器
+        et_password_first.addTextChangedListener(new LoginForgetActivity.HideTextWatcher(et_password_first));
+        et_password_second.addTextChangedListener(new LoginForgetActivity.HideTextWatcher(et_password_second));
+        et_verifycode.addTextChangedListener(new LoginForgetActivity.HideTextWatcher(et_verifycode));
+
+    }
+    // 定义编辑框的文本变化监听器
+    private class HideTextWatcher implements TextWatcher {
+        private EditText mView;
+        private int mMaxLength;
+        private CharSequence mStr;
+
+        HideTextWatcher(EditText v) {
+            super();
+            mView = v;
+            mMaxLength = ViewUtil.getMaxLength(v);
+        }
+
+        // 在编辑框的输入文本变化前触发
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        // 在编辑框的输入文本变化时触发
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            mStr = s;
+        }
+
+        // 在编辑框的输入文本变化后触发
+        public void afterTextChanged(Editable s) {
+            if (mStr == null || mStr.length() == 0)
+                return;
+            // 密码/验证码输入达到6位，都关闭输入法软键盘
+            if ((mStr.length() == 6 && mMaxLength == 6)) {
+                ViewUtil.hideOneInputMethod(LoginForgetActivity.this, mView);
+            }
+        }
     }
 
     @Override
@@ -57,4 +97,5 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
 
     }
+
 }
