@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
     private EditText et_verifycode; // 声明一个编辑框对象
     private String mVerifyCode; // 验证码
     private String mPhone; // 手机号码
+    private Button btn_confirm;
+    private Button btn_verifycode;
 
     private UserDBHelper mHelper; // 声明一个用户数据库的帮助器对象
 
@@ -38,6 +41,9 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
         et_password_second = findViewById(R.id.et_password_second);
         // 从布局文件中获取名叫et_verifycode的编辑框
         et_verifycode = findViewById(R.id.et_verifycode);
+
+        btn_confirm=findViewById(R.id.btn_confirm);
+        btn_verifycode=findViewById(R.id.btn_confirm);
 
         findViewById(R.id.btn_verifycode).setOnClickListener(this);
         findViewById(R.id.btn_confirm).setOnClickListener(this);
@@ -87,7 +93,7 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
     protected void onResume() {
         super.onResume();
         // 获得用户数据库帮助器的一个实例
-        mHelper = UserDBHelper.getInstance(this, 2);
+        mHelper = UserDBHelper.getInstance(this, 1);
         // 恢复页面，则打开数据库连接
         mHelper.openWriteLink();
 
@@ -129,6 +135,13 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
             }
             if (!et_verifycode.getText().toString().equals(mVerifyCode)) {
                 Toast.makeText(this, "请输入正确的验证码", Toast.LENGTH_SHORT).show();
+                // 弹出提醒对话框
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("请重新输入验证码");
+                builder.setMessage("手机号" + mPhone + "，本次所输入的验证码错误" +  "，请重新输入验证码");
+                builder.setPositiveButton("好的", null);
+                AlertDialog alert = builder.create();
+                alert.show();
             } else {
                 UserInfo info = new UserInfo();
                 info.phone=mPhone;
@@ -138,6 +151,14 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
 
                 Toast.makeText(this, "密码修改成功", Toast.LENGTH_SHORT).show();
                 // 把修改好的新密码返回给前一个页面
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("密码修改成功");
+                builder.setMessage("手机号" + mPhone + "，密码修改成功");
+                builder.setPositiveButton("好的", null);
+                AlertDialog alert = builder.create();
+                alert.show();
+                // 把修改好的新密码返回给前一个页面
+
                 Intent intent = new Intent();
                 intent.putExtra("new_password", password_first);
                 setResult(Activity.RESULT_OK, intent);
@@ -145,5 +166,4 @@ public class LoginForgetActivity extends AppCompatActivity implements View.OnCli
             }
         }
     }
-
 }
